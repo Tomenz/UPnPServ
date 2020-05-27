@@ -171,16 +171,16 @@ public:
             pair<map<UdpSocket*, UPnParameter>::iterator, bool>paRet = m_maSockets.emplace(new UdpSocket(), make_tuple(adrFamily, strIpAddr, nInterfaceIndex, new TcpServer(), 0, new UdpSocket(), 0));
             if (paRet.second == true)
             {
-                paRet.first->first->BindErrorFunction(bind(&UpnPServer::OnSocketError, this, _1));
-                paRet.first->first->BindCloseFunction(bind(&UpnPServer::OnSocketCloseing, this, _1));
-                paRet.first->first->BindFuncBytesReceived(bind(&UpnPServer::UpnPDatenEmpfangen, this, _1));
+                paRet.first->first->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketError, this, _1)));
+                paRet.first->first->BindCloseFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketCloseing, this, _1)));
+                paRet.first->first->BindFuncBytesReceived(static_cast<function<void(UdpSocket*)>>(bind(&UpnPServer::UpnPDatenEmpfangen, this, _1)));
 
-                HTTPServSocket(paRet.first->second)->BindErrorFunction(bind(&UpnPServer::OnSocketError, this, _1));
+                HTTPServSocket(paRet.first->second)->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketError, this, _1)));
                 HTTPServSocket(paRet.first->second)->BindNewConnection(function<void(const vector<TcpSocket*>&)>(bind(&UpnPServer::OnNewConnection, this, _1)));
 
-                get<5>(paRet.first->second)->BindErrorFunction(bind(&UpnPServer::OnSocketError, this, _1));
-                get<5>(paRet.first->second)->BindCloseFunction(bind(&UpnPServer::OnSocketCloseing, this, _1));
-                get<5>(paRet.first->second)->BindFuncBytesReceived(bind(&UpnPServer::UpdDatenEmpfangen, this, _1));
+                get<5>(paRet.first->second)->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketError, this, _1)));
+                get<5>(paRet.first->second)->BindCloseFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketCloseing, this, _1)));
+                get<5>(paRet.first->second)->BindFuncBytesReceived(static_cast<function<void(UdpSocket*)>>(bind(&UpnPServer::UpdDatenEmpfangen, this, _1)));
 
                 if (get<0>(paRet.first->second) == AF_INET)
                 {
@@ -540,9 +540,9 @@ public:
         {
             if (pSocket != nullptr)
             {
-                pSocket->BindFuncBytesReceived(bind(&UpnPServer::OnDataRecieved, this, _1));
-                pSocket->BindErrorFunction(bind(&UpnPServer::OnSocketError, this, _1));
-                pSocket->BindCloseFunction(bind(&UpnPServer::OnSocketCloseing, this, _1));
+                pSocket->BindFuncBytesReceived(static_cast<function<void(TcpSocket*)>>(bind(&UpnPServer::OnDataRecieved, this, _1)));
+                pSocket->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketError, this, _1)));
+                pSocket->BindCloseFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketCloseing, this, _1)));
                 m_mtxConnections.lock();
                 m_maServerConn.emplace(pSocket, make_tuple(string(), map<string, string>()));
                 pSocket->StartReceiving();
@@ -1019,10 +1019,10 @@ public:
         auto itRet = m_maClientConn.emplace(bUseSsl == true ? new SslTcpSocket() : new TcpSocket(), make_tuple(strPath, strHost, 0, pServInfo, bUseSsl == true ? 2 : 0, strBody, mHeader));
         if (itRet.second == true)
         {
-            itRet.first->first->BindCloseFunction(bind(&UpnPServer::OnSocketCloseing, this, _1));
-            itRet.first->first->BindErrorFunction(bind(&UpnPServer::OnSocketError, this, _1));
-            itRet.first->first->BindFuncConEstablished(bind(&UpnPServer::OnConnEstablished, this, _1));
-            itRet.first->first->BindFuncBytesReceived(bind(&UpnPServer::OnClientReceived, this, _1));
+            itRet.first->first->BindCloseFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketCloseing, this, _1)));
+            itRet.first->first->BindErrorFunction(static_cast<function<void(BaseSocket*)>>(bind(&UpnPServer::OnSocketError, this, _1)));
+            itRet.first->first->BindFuncConEstablished(static_cast<function<void(TcpSocket*)>>(bind(&UpnPServer::OnConnEstablished, this, _1)));
+            itRet.first->first->BindFuncBytesReceived(static_cast<function<void(TcpSocket*)>>(bind(&UpnPServer::OnClientReceived, this, _1)));
 
             size_t nPos = strHost.rfind(":");
             uint16_t sPort = bUseSsl == true ? 443 : 80;

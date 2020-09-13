@@ -380,12 +380,12 @@ public:
 
     void UpnPDatenEmpfangen(UdpSocket* pUdpSocket)
     {
-        uint32_t nAvalible = pUdpSocket->GetBytesAvailible();
+        size_t nAvalible = pUdpSocket->GetBytesAvailible();
 
         shared_ptr<char> spBuffer(new char[nAvalible + 1]);
 
         string strFrom;
-        uint32_t nRead = pUdpSocket->Read(spBuffer.get(), nAvalible, strFrom);
+        size_t nRead = pUdpSocket->Read(spBuffer.get(), nAvalible, strFrom);
 
         if (nRead > 0)
         {
@@ -484,12 +484,12 @@ public:
     // In this function we receive the answer from out M-Search question
     void UpdDatenEmpfangen(UdpSocket* pUdpSocket)
     {
-        uint32_t nAvalible = pUdpSocket->GetBytesAvailible();
+        size_t nAvalible = pUdpSocket->GetBytesAvailible();
 
         shared_ptr<char> spBuffer(new char[nAvalible + 1]);
 
         string strFrom;
-        uint32_t nRead = pUdpSocket->Read(spBuffer.get(), nAvalible, strFrom);
+        size_t nRead = pUdpSocket->Read(spBuffer.get(), nAvalible, strFrom);
 
         if (nRead > 0)
         {
@@ -553,7 +553,7 @@ public:
 
     void OnDataRecieved(TcpSocket* pTcpSocket)
     {
-        uint32_t nAvalible = pTcpSocket->GetBytesAvailible();
+        size_t nAvalible = pTcpSocket->GetBytesAvailible();
 
         if (nAvalible == 0)
         {
@@ -563,7 +563,7 @@ public:
 
         shared_ptr<char> spBuffer(new char[nAvalible]);
 
-        uint32_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
+        size_t nRead = pTcpSocket->Read(spBuffer.get(), nAvalible);
 
         if (nRead > 0)
         {
@@ -848,7 +848,7 @@ public:
             m_mtxDevices.unlock();
         };
 
-        uint32_t nAvalible = pSocket->GetBytesAvailible();
+        size_t nAvalible = pSocket->GetBytesAvailible();
 
         if (nAvalible == 0) // Connection terminated
         {
@@ -887,7 +887,7 @@ public:
 
         shared_ptr<char> spBuffer(new char[nAvalible]);
 
-        uint32_t nRead = pSocket->Read(spBuffer.get(), nAvalible);
+        size_t nRead = pSocket->Read(spBuffer.get(), nAvalible);
 
         if (nRead > 0)
         {

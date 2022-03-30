@@ -375,12 +375,12 @@ public:
         m_mtxClientConn.unlock();
 
         if (bTcpSocket == true)
-            pBaseSocket->SelfDestroy();
+            reinterpret_cast<TcpSocket*>(pBaseSocket)->SelfDestroy();
     }
 
     void UpnPDatenEmpfangen(UdpSocket* pUdpSocket)
     {
-        size_t nAvalible = pUdpSocket->GetBytesAvailible();
+        size_t nAvalible = pUdpSocket->GetBytesAvailable();
 
         shared_ptr<char> spBuffer(new char[nAvalible + 1]);
 
@@ -484,7 +484,7 @@ public:
     // In this function we receive the answer from out M-Search question
     void UpdDatenEmpfangen(UdpSocket* pUdpSocket)
     {
-        size_t nAvalible = pUdpSocket->GetBytesAvailible();
+        size_t nAvalible = pUdpSocket->GetBytesAvailable();
 
         shared_ptr<char> spBuffer(new char[nAvalible + 1]);
 
@@ -553,7 +553,7 @@ public:
 
     void OnDataRecieved(TcpSocket* pTcpSocket)
     {
-        size_t nAvalible = pTcpSocket->GetBytesAvailible();
+        size_t nAvalible = pTcpSocket->GetBytesAvailable();
 
         if (nAvalible == 0)
         {
@@ -848,7 +848,7 @@ public:
             m_mtxDevices.unlock();
         };
 
-        size_t nAvalible = pSocket->GetBytesAvailible();
+        size_t nAvalible = pSocket->GetBytesAvailable();
 
         if (nAvalible == 0) // Connection terminated
         {
